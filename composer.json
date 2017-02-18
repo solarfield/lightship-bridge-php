@@ -1,0 +1,19 @@
+{
+	"name": "solarfield/lightship-bridge-php",
+
+	"autoload": {
+		"psr-4": {
+			"Solarfield\\LightshipBridge\\": "src/Solarfield/LightshipBridge"
+		}
+	},
+
+	"support": {
+		"source": "https://github.com/solarfield/lightship-bridge-php"
+	},
+
+	"require": {
+		"solarfield/lightship-php": "^0.3",
+		"solarfield/lightship-js": "^0.3",
+		"solarfield/ok-kit-js": "^0.1"
+	}
+}
