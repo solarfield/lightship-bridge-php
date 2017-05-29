@@ -4,6 +4,7 @@ namespace Solarfield\LightshipBridge;
 class JsEnvironment {
 	private $environmentVars = [];
 	private $pluginRegistrations = [];
+	private $options = [];
 	private $depCache = [];
 	
 	public function forwardEnvironmentVar(string $aName) {
@@ -15,6 +16,12 @@ class JsEnvironment {
 	public function forwardPluginRegistration(string $aComponentCode) {
 		if (!in_array($aComponentCode, $this->pluginRegistrations)) {
 			$this->pluginRegistrations[] = $aComponentCode;
+		}
+	}
+	
+	public function forwardOption(string $aOption) {
+		if (!in_array($aOption, $this->options)) {
+			$this->options[] = $aOption;
 		}
 	}
 	
@@ -40,6 +47,10 @@ class JsEnvironment {
 	
 	public function getForwardedPluginRegistrations() : array {
 		return $this->pluginRegistrations;
+	}
+	
+	public function getForwardedOptions() : array {
+		return $this->options;
 	}
 	
 	public function getSystemDepCache() : array {

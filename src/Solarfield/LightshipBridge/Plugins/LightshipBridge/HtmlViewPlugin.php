@@ -35,6 +35,7 @@ class HtmlViewPlugin extends \Solarfield\Lightship\HtmlViewPlugin {
 				'moduleCode' => $view->getCode(),
 				'controllerOptions' => [
 					'pluginRegistrations' => [],
+					'options' => [],
 				],
 			],
 		];
@@ -51,6 +52,13 @@ class HtmlViewPlugin extends \Solarfield\Lightship\HtmlViewPlugin {
 			}
 		}
 		unset($forwards, $k, $registration);
+		
+		$sourceOptions = $this->getView()->getOptions();
+		foreach ($this->getJsEnvironment()->getForwardedOptions() as $code) {
+			if ($sourceOptions->has($code)) {
+				$controllerOptions['bootInfo']['controllerOptions']['options'][$code] = $sourceOptions->get($code);
+			}
+		}
 		
 		//get any scripts flagged as 'bootstrap'.
 		//These will be imported before bootstrap creates the app environment.
