@@ -12,8 +12,6 @@
 	},
 
 	"require": {
-		"solarfield/lightship-php": "^0.4",
-		"solarfield/lightship-js": "^0.4",
-		"solarfield/ok-kit-js": "^0.1"
+		"solarfield/lightship-php": "^0.4"
 	}
 }
