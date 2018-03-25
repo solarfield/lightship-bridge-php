@@ -65,6 +65,10 @@ class HtmlViewPlugin extends \Solarfield\Lightship\HtmlViewPlugin {
 		//This is used to ensure scripts/objects involved in component-resolution/dependency-injection are in scope
 		$items = [];
 		foreach ($view->getScriptIncludes()->getResolvedFiles() as $item) {
+			$item = array_replace([
+				'bootstrap' => false,
+			], $item);
+			
 			if ($item['bootstrap']) {
 				$items[] = $item['resolvedUrl'];
 			}
@@ -111,17 +115,17 @@ class HtmlViewPlugin extends \Solarfield\Lightship\HtmlViewPlugin {
 		$bootstrapGroup = 1000;
 		
 		$includes->addFile("$depsPath/systemjs/systemjs/dist/system.js", [
-			'defer' => true,
+			'attributes' => ['defer'=>true],
 			'group' => $bootstrapGroup,
 		]);
 		
 		$includes->addFile("$appPackagePath/libs/js/browser.js", [
-			'defer' => true,
+			'attributes' => ['defer'=>true],
 			'group' => $bootstrapGroup,
 		]);
 		
 		$includes->addFile("$appPackagePath/libs/js/index.js", [
-			'defer' => true,
+			'attributes' => ['defer'=>true],
 			'group' => $bootstrapGroup,
 		]);
 	}
@@ -136,6 +140,7 @@ class HtmlViewPlugin extends \Solarfield\Lightship\HtmlViewPlugin {
 		if ($link) {
 			$dirs = str_replace('\\', '/', $link['namespace']);
 			$includes->addFile("app/$dirs/Controller", [
+				'ignore' => true,
 				'bootstrap' => true,
 				'base' => 'module',
 				'onlyIfExists' => true,
@@ -168,7 +173,7 @@ class HtmlViewPlugin extends \Solarfield\Lightship\HtmlViewPlugin {
 	}
 	
 	protected function handleViewCreateScriptElements(CreateHtmlEvent $aEvt) {
-		$aEvt->getHtml()->append($this->createJsStubScriptElement());
+		$aEvt->getHtml()->prepend($this->createJsStubScriptElement());
 	}
 	
 	public function getJsEnvironment() {
