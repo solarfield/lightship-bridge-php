@@ -134,11 +134,11 @@ class HtmlViewPlugin extends \Solarfield\Lightship\HtmlViewPlugin {
 		$includes = $this->getView()->getScriptIncludes();
 		
 		$moduleCode = $this->getView()->getCode();
-		$chain = $this->getView()->getController()->getChain($moduleCode);
+		$chain = $this->getView()->getController()->getComponentChain($moduleCode);
 		
-		$link = StructUtils::find($chain, 'id', 'module');
+		$link = $chain->get('module');
 		if ($link) {
-			$dirs = str_replace('\\', '/', $link['namespace']);
+			$dirs = str_replace('\\', '/', $link->namespace());
 			$includes->addFile("app/$dirs/Controller", [
 				'ignore' => true,
 				'bootstrap' => true,
