@@ -1,13 +1,11 @@
 <?php
 namespace Solarfield\LightshipBridge\Plugins\LightshipBridge;
 
-use App\Environment;
 use Solarfield\Lightship\Events\CreateHtmlEvent;
 use Solarfield\Lightship\HtmlView;
 use Solarfield\LightshipBridge\JsEnvironment;
 use Solarfield\LightshipBridge\Events\ResolveJsEnvironmentEvent;
 use Solarfield\Ok\JsonUtils;
-use Solarfield\Ok\StructUtils;
 
 class HtmlViewPlugin extends \Solarfield\Lightship\HtmlViewPlugin {
 	private $jsEnvironment;
@@ -26,7 +24,7 @@ class HtmlViewPlugin extends \Solarfield\Lightship\HtmlViewPlugin {
 		//get forwarded environment vars
 		$vars = [];
 		foreach ($this->getJsEnvironment()->getForwardedEnvironmentVars() as $k) {
-			$vars[$k] = Environment::getVars()->get($k);
+			$vars[$k] = $view->getEnvironment()->getVars()->get($k);
 		}
 		if ($vars) $environmentOptions['vars'] = $vars;
 		
@@ -110,8 +108,8 @@ class HtmlViewPlugin extends \Solarfield\Lightship\HtmlViewPlugin {
 	
 	protected function resolveInitScriptIncludes() {
 		$includes = $this->getView()->getScriptIncludes();
-		$depsPath = Environment::getVars()->get('appDependenciesWebPath');
-		$appPackagePath = Environment::getVars()->get('appPackageWebPath');
+		$depsPath = $this->getView()->getEnvironment()->getVars()->get('appDependenciesWebPath');
+		$appPackagePath = $this->getView()->getEnvironment()->getVars()->get('appPackageWebPath');
 		$bootstrapGroup = 1000;
 		
 		$includes->addFile("$depsPath/systemjs/systemjs/dist/system.js", [
@@ -134,7 +132,7 @@ class HtmlViewPlugin extends \Solarfield\Lightship\HtmlViewPlugin {
 		$includes = $this->getView()->getScriptIncludes();
 		
 		$moduleCode = $this->getView()->getCode();
-		$chain = $this->getView()->getController()->getComponentChain($moduleCode);
+		$chain = $this->getView()->getEnvironment()->getComponentChain($moduleCode);
 		
 		$link = $chain->get('module');
 		if ($link) {
