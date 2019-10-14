@@ -18,9 +18,9 @@ class HtmlViewPlugin extends \Solarfield\Lightship\HtmlViewPlugin {
 		$stub = [];
 		
 		$environmentOptions = [];
-		
-		if (\App\DEBUG) $environmentOptions['debug'] = \App\DEBUG;
-		
+
+		if ($view->getEnvironment()->isDevModeEnabled()) $environmentOptions['devModeEnabled'] = true;
+
 		//get forwarded environment vars
 		$vars = [];
 		foreach ($this->getJsEnvironment()->getForwardedEnvironmentVars() as $k) {
