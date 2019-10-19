@@ -83,9 +83,6 @@ class HtmlViewPlugin extends \Solarfield\Lightship\HtmlViewPlugin {
 		//get pending data
 		/** @var \Solarfield\Lightship\JsonView $jsonView */
 		$jsonView = $controller->createView('Json');
-		$jsonView->setController($controller);
-		$jsonView->init();
-		$jsonView->setModel($view->getModel());
 		$pendingData = $jsonView->createJsonData();
 		if ($pendingData) $controllerOptions['bootInfo']['controllerOptions']['pendingData'] = $pendingData;
 		unset($jsonView, $pendingData);
