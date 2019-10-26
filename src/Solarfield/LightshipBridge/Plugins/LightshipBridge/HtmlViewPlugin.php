@@ -15,34 +15,30 @@ class HtmlViewPlugin extends \Solarfield\Lightship\HtmlViewPlugin {
 		
 		$view = $this->getView();
 		$controller = $view->getController();
-		$stub = [];
-		
-		$environmentOptions = [];
+		$environment = $view->getEnvironment();
 
-		if ($view->getEnvironment()->isDevModeEnabled()) $environmentOptions['devModeEnabled'] = true;
+		$stub = [
+			'moduleCode' => $view->getCode(),
+		];
+
+		$environmentOptions = [];
+		$controllerOptions = [];
+		$modelOptions = [];
+
+		if ($environment->isDevModeEnabled()) $environmentOptions['devModeEnabled'] = true;
 
 		//get forwarded environment vars
 		$vars = [];
 		foreach ($this->getJsEnvironment()->getForwardedEnvironmentVars() as $k) {
-			$vars[$k] = $view->getEnvironment()->getVars()->get($k);
+			$vars[$k] = $environment->getVars()->get($k);
 		}
 		if ($vars) $environmentOptions['vars'] = $vars;
-		
-		$controllerOptions = [
-			'bootInfo' => [
-				'moduleCode' => $view->getCode(),
-				'controllerOptions' => [
-					'pluginRegistrations' => [],
-					'options' => [],
-				],
-			],
-		];
 		
 		//get forwarded plugin registrations
 		$forwards = $this->getJsEnvironment()->getForwardedPluginRegistrations();
 		foreach ($controller->getPlugins()->getRegistrations() as $k => $registration) {
 			if (in_array($registration['componentCode'], $forwards)) {
-				$controllerOptions['bootInfo']['controllerOptions']['pluginRegistrations'][] = [
+				$controllerOptions['pluginRegistrations'][] = [
 					'componentCode' => $registration['componentCode'],
 				];
 				
@@ -54,7 +50,7 @@ class HtmlViewPlugin extends \Solarfield\Lightship\HtmlViewPlugin {
 		$sourceOptions = $this->getView()->getOptions();
 		foreach ($this->getJsEnvironment()->getForwardedOptions() as $code) {
 			if ($sourceOptions->has($code)) {
-				$controllerOptions['bootInfo']['controllerOptions']['options'][$code] = $sourceOptions->get($code);
+				$controllerOptions['options'][$code] = $sourceOptions->get($code);
 			}
 		}
 		
@@ -84,12 +80,13 @@ class HtmlViewPlugin extends \Solarfield\Lightship\HtmlViewPlugin {
 		/** @var \Solarfield\Lightship\JsonView $jsonView */
 		$jsonView = $controller->createView('Json');
 		$pendingData = $jsonView->createJsonData();
-		if ($pendingData) $controllerOptions['bootInfo']['controllerOptions']['pendingData'] = $pendingData;
+		if ($pendingData) $modelOptions['pendingData'] = $pendingData;
 		unset($jsonView, $pendingData);
 		
 		if ($environmentOptions) $stub['environmentOptions'] = $environmentOptions;
 		if ($controllerOptions) $stub['controllerOptions'] = $controllerOptions;
-		
+		if ($modelOptions) $stub['modelOptions'] = $modelOptions;
+
 		return $stub;
 	}
 	

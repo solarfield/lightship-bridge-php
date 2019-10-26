@@ -56,4 +56,8 @@ class JsEnvironment {
 	public function getSystemDepCache() : array {
 		return $this->depCache;
 	}
+
+	public function __construct() {
+		$this->forwardEnvironmentVar('loggingLevel');
+	}
 }
