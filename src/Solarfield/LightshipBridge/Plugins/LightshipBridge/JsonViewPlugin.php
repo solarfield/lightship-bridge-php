@@ -9,7 +9,11 @@ class JsonViewPlugin extends \Solarfield\Lightship\JsonViewPlugin {
 		parent::__construct($aView, $aComponentCode);
 
 		$this->getView()->addEventListener('create-json-data', function (CreateJsonDataEvent $aEvt) {
-			if (($stdoutMessages = $this->getView()->getEnvironment()->takeBufferedStdoutMessages())) {
+			$stdoutMessages = $this->getView()->getEnvironment()->getPlugins()
+				->expectByClass('\Solarfield\LightshipBridge\Plugins\LightshipBridge\EnvironmentPlugin')
+				->takeBufferedStdoutMessages();
+
+			if ($stdoutMessages) {
 				$aEvt->getJsonData()->mergeInto([
 					'app' => [
 						'stdoutMessages' => $stdoutMessages,

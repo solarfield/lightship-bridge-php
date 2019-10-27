@@ -36,13 +36,18 @@ class HtmlViewPlugin extends \Solarfield\Lightship\HtmlViewPlugin {
 		
 		//get forwarded plugin registrations
 		$forwards = $this->getJsEnvironment()->getForwardedPluginRegistrations();
+		foreach ($environment->getPlugins()->getRegistrations() as $k => $registration) {
+			if (in_array($registration['componentCode'], $forwards)) {
+				$environmentOptions['pluginRegistrations'][] = [
+					'componentCode' => $registration['componentCode'],
+				];
+			}
+		}
 		foreach ($controller->getPlugins()->getRegistrations() as $k => $registration) {
 			if (in_array($registration['componentCode'], $forwards)) {
 				$controllerOptions['pluginRegistrations'][] = [
 					'componentCode' => $registration['componentCode'],
 				];
-				
-				unset($forwards[$k]);
 			}
 		}
 		unset($forwards, $k, $registration);
@@ -80,7 +85,11 @@ class HtmlViewPlugin extends \Solarfield\Lightship\HtmlViewPlugin {
 		/** @var \Solarfield\Lightship\JsonView $jsonView */
 		$jsonView = $controller->createView('Json');
 		$pendingData = $jsonView->createJsonData();
-		if ($pendingData) $modelOptions['pendingData'] = $pendingData;
+		if ($pendingData) $modelOptions['data'] = [
+			'app' => [
+				'pendingData' => $pendingData,
+			]
+		];
 		unset($jsonView, $pendingData);
 		
 		if ($environmentOptions) $stub['environmentOptions'] = $environmentOptions;
@@ -140,6 +149,16 @@ class HtmlViewPlugin extends \Solarfield\Lightship\HtmlViewPlugin {
 				'group' => 1250000,
 			]);
 		}
+
+		$this->getView()->getScriptIncludes()->addFile('solarfield/lightship-bridge-php/src/Solarfield/LightshipBridge/Plugins/LightshipBridge/EnvironmentPlugin', [
+			'bootstrap' => true,
+			'ignore' => true,
+		]);
+
+		$this->getView()->getScriptIncludes()->addFile('solarfield/lightship-bridge-php/src/Solarfield/LightshipBridge/Plugins/LightshipBridge/ControllerPlugin', [
+			'bootstrap' => true,
+			'ignore' => true,
+		]);
 	}
 	
 	protected function createJsStubScriptElement() {
