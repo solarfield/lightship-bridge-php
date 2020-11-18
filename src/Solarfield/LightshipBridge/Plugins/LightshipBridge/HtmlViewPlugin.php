@@ -48,7 +48,7 @@ class HtmlViewPlugin extends \Solarfield\Lightship\HtmlViewPlugin {
 					'componentCode' => $registration['componentCode'],
 				];
 				
-				unset($forwards[$k]);
+				unset($forwards[$registration['componentCode']]);
 			}
 		}
 		unset($forwards, $k, $registration);
