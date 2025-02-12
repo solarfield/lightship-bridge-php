@@ -29,6 +29,23 @@ class HtmlViewPlugin extends \Solarfield\Lightship\HtmlViewPlugin {
 			$vars[$k] = Environment::getVars()->get($k);
 		}
 		if ($vars) $environmentOptions['vars'] = $vars;
+
+		// forward any base chain links with key forward=true
+		$forwardedBaseChainLinks = array_filter(Environment::getBaseChain(), function ($link) {
+			return array_key_exists('forward', $link) && $link['forward'] == true;
+		});
+		if (count($forwardedBaseChainLinks) > 0) {
+			$forwardedBaseChainLinks = array_map(function ($link) {
+				return [
+					'id' => (string)$link['id'],
+
+					// map the php-style namespace id, to js-style
+					'namespace' => (string)str_replace('\\', '.', (string)$link['namespace']),
+				];
+			}, $forwardedBaseChainLinks);
+
+			$environmentOptions['baseChainLinks'] = array_values($forwardedBaseChainLinks);
+		}
 		
 		$controllerOptions = [
 			'bootInfo' => [
